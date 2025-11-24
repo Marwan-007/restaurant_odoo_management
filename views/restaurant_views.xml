@@ -1,0 +1,69 @@
+<odoo>
+    <record id="view_dish_tree" model="ir.ui.view">
+        <field name="name">restaurant.dish.tree</field>
+        <field name="model">restaurant.dish</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="price"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_dish" model="ir.actions.act_window">
+        <field name="name">Menu du Restaurant</field>
+        <field name="res_model">restaurant.dish</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <record id="view_order_form" model="ir.ui.view">
+        <field name="name">restaurant.order.form</field>
+        <field name="model">restaurant.order</field>
+        <field name="arch" type="xml">
+            <form>
+                <header>
+                    <button name="action_send_kitchen" string="Envoyer en Cuisine" type="object" class="oe_highlight" invisible="state != 'draft'"/>
+                    
+                    <button name="action_kitchen_ready" string="Plat Prêt" type="object" class="oe_highlight" invisible="state != 'cooking'"/>
+                    
+                    <button name="action_mark_done" string="Encaisser / Terminer" type="object" class="oe_highlight" invisible="state != 'ready'"/>
+
+                    <field name="state" widget="statusbar" statusbar_visible="draft,cooking,ready,done"/>
+                </header>
+                <sheet>
+                    <group>
+                        <field name="table_number"/>
+                        <field name="dish_ids" widget="many2many_tags"/>
+                        <field name="note"/>
+                        <field name="total_price" decoration-bf="1"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="view_order_tree" model="ir.ui.view">
+        <field name="name">restaurant.order.tree</field>
+        <field name="model">restaurant.order</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="table_number"/>
+                <field name="dish_ids" widget="many2many_tags"/>
+                <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-warning="state == 'cooking'" decoration-success="state == 'done'"/>
+            </list>
+        </field>
+    </record>
+
+    <record id="action_order" model="ir.actions.act_window">
+        <field name="name">Commandes en cours</field>
+        <field name="res_model">restaurant.order</field>
+        <field name="view_mode">kanban,list,form</field>
+    </record>
+
+    <menuitem id="resto_root" name="Mon Restaurant"/>
+    
+    <menuitem id="resto_orders" name="Commandes" parent="resto_root" action="action_order"/>
+    
+    <menuitem id="resto_menu" name="Plats / Menu" parent="resto_root" action="action_dish"/>
+
+</odoo>

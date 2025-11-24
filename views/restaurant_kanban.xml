@@ -1,0 +1,49 @@
+<odoo>
+    <record id="view_restaurant_order_kanban" model="ir.ui.view">
+        <field name="name">restaurant.order.kanban</field>
+        <field name="model">restaurant.order</field>
+        <field name="arch" type="xml">
+            <kanban default_group_by="state" records_draggable="1" sample="1">
+                
+                <field name="id"/>
+                <field name="table_number"/>
+                <field name="total_price"/>
+                <field name="state"/>
+                <field name="dish_ids"/>
+
+                <templates>
+                    <t t-name="kanban-box">
+                        <div class="oe_kanban_global_click o_kanban_record_has_image_fill">
+                            
+                            <div class="o_kanban_record_top mb-2">
+                                <div class="o_kanban_record_headings">
+                                    <strong class="o_kanban_record_title">
+                                        <span>Table <field name="table_number"/></span>
+                                    </strong>
+                                </div>
+                                <div class="o_kanban_record_top_right">
+                                    <field name="state" widget="label_selection" 
+                                           options="{'classes': {'draft': 'default', 'cooking': 'warning', 'ready': 'success', 'done': 'success'}}"/>
+                                </div>
+                            </div>
+
+                            <div class="o_kanban_record_body">
+                                <field name="dish_ids" widget="many2many_tags" options="{'color_field': 'color'}"/>
+                            </div>
+
+                            <div class="o_kanban_record_bottom mt-2">
+                                <div class="oe_kanban_bottom_left text-muted">
+                                    </div>
+                                <div class="oe_kanban_bottom_right">
+                                    <span class="badge rounded-pill text-bg-dark" style="font-size: 1.1em;">
+                                        <field name="total_price"/> €
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+</odoo>
