@@ -1,3 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_resto_dish,resto.dish.access,model_restaurant_dish,,1,1,1,1
 access_resto_order,resto.order.access,model_restaurant_order,,1,1,1,1
+access_resto_chef,resto.chef.access,model_restaurant_chef,,1,1,1,1

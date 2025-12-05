@@ -1,21 +1,78 @@
 <odoo>
+    <!-- Vue Liste des Chefs -->
+    <record id="view_chef_tree" model="ir.ui.view">
+        <field name="name">restaurant.chef.tree</field>
+        <field name="model">restaurant.chef</field>
+        <field name="arch" type="xml">
+            <list>
+                <field name="name"/>
+                <field name="specialty" widget="badge"/>
+            </list>
+        </field>
+    </record>
+
+    <!-- Vue Formulaire des Chefs -->
+    <record id="view_chef_form" model="ir.ui.view">
+        <field name="name">restaurant.chef.form</field>
+        <field name="model">restaurant.chef</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="specialty"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action pour les Chefs -->
+    <record id="action_chef" model="ir.actions.act_window">
+        <field name="name">Nos Chefs</field>
+        <field name="res_model">restaurant.chef</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+    <!-- Vue Liste des Plats (Avec Catégorie) -->
     <record id="view_dish_tree" model="ir.ui.view">
         <field name="name">restaurant.dish.tree</field>
         <field name="model">restaurant.dish</field>
         <field name="arch" type="xml">
             <list>
                 <field name="name"/>
+                <field name="category" widget="badge"/>
                 <field name="price"/>
             </list>
         </field>
     </record>
 
+    <!-- Vue Formulaire des Plats -->
+    <record id="view_dish_form" model="ir.ui.view">
+        <field name="name">restaurant.dish.form</field>
+        <field name="model">restaurant.dish</field>
+        <field name="arch" type="xml">
+            <form>
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="category"/>
+                        <field name="price"/>
+                        <field name="description"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Action pour les Plats -->
     <record id="action_dish" model="ir.actions.act_window">
         <field name="name">Menu du Restaurant</field>
         <field name="res_model">restaurant.dish</field>
         <field name="view_mode">list,form</field>
     </record>
 
+    <!-- Vue Formulaire Commande (Avec Chef Assigné) -->
     <record id="view_order_form" model="ir.ui.view">
         <field name="name">restaurant.order.form</field>
         <field name="model">restaurant.order</field>
@@ -23,32 +80,45 @@
             <form>
                 <header>
                     <button name="action_send_kitchen" string="Envoyer en Cuisine" type="object" class="oe_highlight" invisible="state != 'draft'"/>
-                    
                     <button name="action_kitchen_ready" string="Plat Prêt" type="object" class="oe_highlight" invisible="state != 'cooking'"/>
-                    
                     <button name="action_mark_done" string="Encaisser / Terminer" type="object" class="oe_highlight" invisible="state != 'ready'"/>
-
                     <field name="state" widget="statusbar" statusbar_visible="draft,cooking,ready,done"/>
                 </header>
                 <sheet>
+                    <!--  étoiles priorité  -->
+                    <div class="oe_title">
+                        <h1>
+                            <field name="priority" widget="priority" class="mr-3"/>
+                        </h1>
+                    </div>
+
                     <group>
-                        <field name="table_number"/>
-                        <field name="dish_ids" widget="many2many_tags"/>
-                        <field name="note"/>
-                        <field name="total_price" decoration-bf="1"/>
+                        <group>
+                            <field name="table_number"/>
+                            <field name="dish_ids" widget="many2many_tags"/>
+                        </group>
+                        <group>
+                            <field name="chef_id" widget="badge"/> 
+                            <field name="total_price" decoration-bf="1"/>
+                        </group>
                     </group>
+                    <field name="note" placeholder="Ex: Attention client pressé, allergie aux arachides..."/>
                 </sheet>
             </form>
         </field>
     </record>
 
+    <!-- Vue Liste Commande -->
     <record id="view_order_tree" model="ir.ui.view">
         <field name="name">restaurant.order.tree</field>
         <field name="model">restaurant.order</field>
         <field name="arch" type="xml">
             <list>
                 <field name="table_number"/>
+                <!-- Ajout du chef dans la liste aussi -->
+                <field name="chef_id" optional="show"/>
                 <field name="dish_ids" widget="many2many_tags"/>
+                <field name="total_price" sum="Total"/>
                 <field name="state" widget="badge" decoration-info="state == 'draft'" decoration-warning="state == 'cooking'" decoration-success="state == 'done'"/>
             </list>
         </field>
@@ -57,13 +127,16 @@
     <record id="action_order" model="ir.actions.act_window">
         <field name="name">Commandes en cours</field>
         <field name="res_model">restaurant.order</field>
+        <!-- kanban -->
         <field name="view_mode">kanban,list,form</field>
     </record>
 
+    <!-- Menu Racine -->
     <menuitem id="resto_root" name="Mon Restaurant"/>
     
-    <menuitem id="resto_orders" name="Commandes" parent="resto_root" action="action_order"/>
-    
-    <menuitem id="resto_menu" name="Plats / Menu" parent="resto_root" action="action_dish"/>
+    <!-- Sous-menus -->
+    <menuitem id="resto_orders" name="Commandes" parent="resto_root" action="action_order" sequence="10"/>
+    <menuitem id="resto_menu" name="Plats / Menu" parent="resto_root" action="action_dish" sequence="20"/>
+    <menuitem id="resto_chef" name="Nos Chefs" parent="resto_root" action="action_chef" sequence="30"/>
 
 </odoo>
